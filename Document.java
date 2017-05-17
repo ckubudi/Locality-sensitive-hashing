@@ -2,7 +2,7 @@ import java.util.HashSet;
 
 
 public class Document {
-	private HashSet<String> shingles;
+	private HashSet<Integer> shingles;
 	private String name;
 	private String artist;
 	
@@ -12,10 +12,9 @@ public class Document {
 	}
 	
 	public void addShingle(String shingle){
-		shingles.add(shingle);
 	}
 
-	public HashSet<String> getShingles() {
+	public HashSet<Integer> getShingles() {
 		return shingles;
 	}
 
