@@ -2,9 +2,12 @@ package lsh.test.tests;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -44,20 +47,24 @@ public class CountDuplicatesByName {
 	public static void main(String[] args) throws IOException{
 		long start, end;
 		BufferedReader reader = new BufferedReader(new FileReader(new File("rsc/file_path")));
+		
 		String path = reader.readLine();
 		reader.close();
+		
 		print(path);
+		
 		File rootDir = new File(path);
 		print(rootDir.isDirectory());
 		print(rootDir.exists());
 		
 		start = time();
 		print(countChildFiles(rootDir));
+		
 		DocCounter fdup = new DocCounter();
 		fdup.countDocs(rootDir);
 		end = time();
-		print(fdup.getNumberOfDuplicates());
-		print(fdup.getNumberOfDuplicatedFiles());
+		print(fdup.getNumberOfDuplicatesWithRepetition());
+		print(fdup.getNumberOfDuplicatedWithoutRepetition());
 		print("Time to count: " + (end-start)/1000.0 + " s");
 		
 		List<String> dupNames = fdup.getDuplicatedFiles();
@@ -72,6 +79,18 @@ public class CountDuplicatesByName {
 		
 		//MAX OF DUPLICATES, shoud be 2, which is the number of music sites
 		List<Integer> dupValues = new ArrayList<Integer>(dc.values());
-		print("Max number of duplicates is " + max(dupValues));
+		print("Max number of duplicates ies " + max(dupValues));
+		
+		List<int[]> fileSignatures = fdup.getMinhashedShingles(rootDir, 9, 100, 200000);
+		print("Number of files " + fileSignatures.size());
+		print("Segue exemplo de assinatura");
+		print(Arrays.toString(fileSignatures.get(10)));
+		
+		String signaturePath = "rsc/signatures.obj";
+		FileOutputStream fos = new FileOutputStream(new File(signaturePath));
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(fileSignatures);
+		oos.close();
+		print("Arquivo salvo em " + signaturePath);
 	}
 }

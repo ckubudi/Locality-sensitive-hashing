@@ -1,10 +1,15 @@
 package lsh.test.methods;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DocCounter {
 	private Map<String, Integer> docCount;
@@ -27,19 +32,50 @@ public class DocCounter {
 		}
 	}
 	
+	public List<int[]> getMinhashedShingles(File root, int shingleSize, int n_hash, int N) throws IOException{
+		List<int[]> mh_shingle = new ArrayList<int[]>();
+		
+		for(File fSite : root.listFiles()) {
+			for(File fAuthor : fSite.listFiles()) {
+				for(File fMusic : fAuthor.listFiles()) {
+					BufferedReader reader = new BufferedReader(new FileReader(fMusic));
+					String content = "";
+					while(reader.ready()) {
+						content += reader.readLine() + '\n';
+					}
+					reader.close();
+					
+					Set<Integer> shingleBag = new HashSet<Integer>();
+					
+					for(int i = 0; i < content.length()-shingleSize; i++) {
+						String shingle = content.substring(i, i+shingleSize);
+						int shingleCode = shingle.hashCode();
+						shingleBag.add(shingleCode);
+					}
+					
+					SignatureMaker sm = new SignatureMaker(n_hash, N);
+					int[] signature = sm.make(shingleBag);
+					mh_shingle.add(signature);
+					
+				}
+			}
+		}
+		return mh_shingle;
+	}
+	
 	public Map<String, Integer> getDocCountMap() {
 		return docCount;
 	}
-	public int getNumberOfDuplicates() {
+	public int getNumberOfDuplicatesWithRepetition() {
 		int count = 0;
 		for(String d : docCount.keySet()) {
 			if(docCount.get(d) > 1) {
-				count += docCount.get(d)-1;
+				count += docCount.get(d);
 			}
 		}
 		return count;
 	}
-	public int getNumberOfDuplicatedFiles() {
+	public int getNumberOfDuplicatedWithoutRepetition() {
 		int count = 0;
 		for(String d : docCount.keySet()) {
 			if(docCount.get(d) > 1) {
