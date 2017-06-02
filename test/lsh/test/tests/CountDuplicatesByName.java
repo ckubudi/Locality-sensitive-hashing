@@ -79,9 +79,9 @@ public class CountDuplicatesByName {
 		
 		//MAX OF DUPLICATES, shoud be 2, which is the number of music sites
 		List<Integer> dupValues = new ArrayList<Integer>(dc.values());
-		print("Max number of duplicates ies " + max(dupValues));
+		print("Max number of duplicates is " + max(dupValues));
 		
-		List<int[]> fileSignatures = fdup.getMinhashedShingles(rootDir, 9, 100, 200000);
+		List<int[]> fileSignatures = fdup.getMinhashedShingles(rootDir, 9, 20, 20000000);
 		print("Number of files " + fileSignatures.size());
 		print("Segue exemplo de assinatura");
 		print(Arrays.toString(fileSignatures.get(10)));

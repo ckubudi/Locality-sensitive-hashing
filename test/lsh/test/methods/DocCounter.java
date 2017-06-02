@@ -34,16 +34,18 @@ public class DocCounter {
 	
 	public List<int[]> getMinhashedShingles(File root, int shingleSize, int n_hash, int N) throws IOException{
 		List<int[]> mh_shingle = new ArrayList<int[]>();
+		SignatureMaker sm = new SignatureMaker(n_hash, N);
 		
 		for(File fSite : root.listFiles()) {
 			for(File fAuthor : fSite.listFiles()) {
 				for(File fMusic : fAuthor.listFiles()) {
 					BufferedReader reader = new BufferedReader(new FileReader(fMusic));
-					String content = "";
+					StringBuffer contentBuffer = new StringBuffer();
 					while(reader.ready()) {
-						content += reader.readLine() + '\n';
+						contentBuffer.append(reader.readLine() + '\n');
 					}
 					reader.close();
+					String content = contentBuffer.toString();
 					
 					Set<Integer> shingleBag = new HashSet<Integer>();
 					
@@ -53,10 +55,8 @@ public class DocCounter {
 						shingleBag.add(shingleCode);
 					}
 					
-					SignatureMaker sm = new SignatureMaker(n_hash, N);
 					int[] signature = sm.make(shingleBag);
 					mh_shingle.add(signature);
-					
 				}
 			}
 		}

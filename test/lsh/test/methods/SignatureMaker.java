@@ -13,6 +13,7 @@ public class SignatureMaker {
 		this.b = new int[n_hash];
 		this.p = 2147483647;
 		this.N = N;
+		//((a x + b)%p)%N
 		for(int i = 0; i < n_hash ; i++) {
 			a[i] = random.nextInt();
 			b[i] = random.nextInt();
