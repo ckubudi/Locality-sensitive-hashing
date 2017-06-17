@@ -1,14 +1,15 @@
 package lsh.test.tests;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import lsh.test.methods.LSH;
+import lsh.utils.Utils;
 
 public class ComputeLSHPairs {
 	public static void print(Object p) {
@@ -44,41 +45,48 @@ public class ComputeLSHPairs {
 	public static String listString(int[] a) {
 		return Arrays.toString(a);
 	}
+
 	public static void main(String[] args) throws Exception{
+		String dupPath = "rsc/duplicates.obj";
 		String signaturePath = "rsc/signatures.obj";
-		FileInputStream fis = new FileInputStream(new File(signaturePath));
-		ObjectInputStream ois = new ObjectInputStream(fis);
-		List<int[]> fileSignatures = (List<int[]>)ois.readObject();
-		ois.close();
-//		print(Arrays.toString(fileSignatures.get(0)));
-//		print(Arrays.toString(fileSignatures.get(1)));
-//		print(fileSignatures.get(0).length);
-//		
-		List<int[]> miniSignatures = fileSignatures.subList(0, 2350);
+		String namesPath = "rsc/id_to_name.obj";
+		Map<String,Integer> dupMap = (Map<String,Integer>)Utils.readObject(dupPath);
+		List<int[]> fileSignatures = (List<int[]>)Utils.readObject(signaturePath);
+		List<String> fileNames = (List<String>)Utils.readObject(namesPath);
 		
 		LSH lsh = new LSH(1);
-		Set<int[]> pairCandidates = lsh.getPairsCandidates(miniSignatures);
+		Set<int[]> pairCandidates = lsh.getPairsCandidates(fileSignatures);
 		List<int[]> pairList = new ArrayList<int[]>(pairCandidates);
-//		print(pairCandidates.size());
-//		print(fileSignatures.size());
-//		int n = fileSignatures.size();
-//		print(n*n/2);
-//		print("End");
+		
+		Set<int[]> realPairs = new HashSet<int[]>();
+		
 		print(pairCandidates.size());
-		for(int i = 0; i < pairList.size() && i < 100; i++) {
-			System.out.println(Arrays.toString(pairList.get(i)));
+		int foundNameDups = 0;
+		for(int i = 0; i < pairList.size(); i++) {
+			print(Arrays.toString(pairList.get(i)));
 			int[] pair = pairList.get(i);
-			int[] doc_i = miniSignatures.get(pair[0]);
-			int[] doc_j = miniSignatures.get(pair[1]);
+			print(fileNames.get(pair[0]) + " vs " + fileNames.get(pair[1]));
+			int[] doc_i = fileSignatures.get(pair[0]);
+			int[] doc_j = fileSignatures.get(pair[1]);
 			boolean are_equal = true;
+			double sim = 0;
 			for(int k = 0; k < doc_i.length; k++) {
 				if(doc_i[k] != doc_j[k]) {
 					are_equal = false;
+				}else {
+					sim += 1;
 				}
 			}
+			sim /= doc_i.length;
 			print(are_equal);
+			print("signature similarity: " + sim);
+			String name0 = fileNames.get(pair[0]);
+			String name1 = fileNames.get(pair[1]);
+			if(name0.equals(name1)) {
+				foundNameDups += 1;
+			}
 		}
-//		print(listString(miniSignatures.get(874)));
-//		print(listString(miniSignatures.get(889)));
+		
+		System.out.println("Found " + foundNameDups + " name dups");
 	}
 }
