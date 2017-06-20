@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,15 @@ public class Utils {
 		reader.close();
 		return sb.toString();
 	}
+	public static File readPathFile(String pathFile) throws IOException{
+		BufferedReader reader = new BufferedReader(new FileReader(new File("rsc/file_path")));
+		
+		String path = reader.readLine();
+		reader.close();
+		
+		File rootDir = new File(path);
+		return rootDir;
+	}
 	public static LSHConfig readConfigFile(String path) throws IOException{
 		String content = readFile(path);
 		Map<String, String> config_params = new HashMap<String,String>();
@@ -53,5 +63,18 @@ public class Utils {
 		}
 		return new LSHConfig(config_params);
 		
+	}
+	public static double similarity(int[] a, int[] b){
+		if(a.length != b.length) {
+			throw new InvalidParameterException("a and b must have same length");
+		}
+		double sim = 0;
+		for(int k = 0; k < a.length; k++) {
+			if(a[k] == b[k]) {
+				sim += 1;
+			}
+		}
+		sim /= a.length;
+		return sim;
 	}
 }

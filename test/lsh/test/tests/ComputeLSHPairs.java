@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lsh.test.methods.LSH;
+import lsh.methods.LSHTmp;
 import lsh.utils.Utils;
 
 public class ComputeLSHPairs {
@@ -47,14 +47,14 @@ public class ComputeLSHPairs {
 	}
 
 	public static void main(String[] args) throws Exception{
-		String dupPath = "rsc/duplicates.obj";
-		String signaturePath = "rsc/signatures.obj";
-		String namesPath = "rsc/id_to_name.obj";
-		Map<String,Integer> dupMap = (Map<String,Integer>)Utils.readObject(dupPath);
-		List<int[]> fileSignatures = (List<int[]>)Utils.readObject(signaturePath);
+//		String dupPath = "rsc/duplicates.obj";
+		String signaturePath = "rsc/signatures_list.obj";
+		String namesPath = "rsc/filenames_list.obj";
+//		Map<String,Integer> dupMap = (Map<String,Integer>)Utils.readObject(dupPath);
+		int[][] fileSignatures = (int[][])Utils.readObject(signaturePath);
 		List<String> fileNames = (List<String>)Utils.readObject(namesPath);
 		
-		LSH lsh = new LSH(1);
+		LSHTmp lsh = new LSHTmp(1);
 		Set<int[]> pairCandidates = lsh.getPairsCandidates(fileSignatures);
 		List<int[]> pairList = new ArrayList<int[]>(pairCandidates);
 		
@@ -66,8 +66,8 @@ public class ComputeLSHPairs {
 			print(Arrays.toString(pairList.get(i)));
 			int[] pair = pairList.get(i);
 			print(fileNames.get(pair[0]) + " vs " + fileNames.get(pair[1]));
-			int[] doc_i = fileSignatures.get(pair[0]);
-			int[] doc_j = fileSignatures.get(pair[1]);
+			int[] doc_i = fileSignatures[pair[0]];
+			int[] doc_j = fileSignatures[pair[1]];
 			boolean are_equal = true;
 			double sim = 0;
 			for(int k = 0; k < doc_i.length; k++) {

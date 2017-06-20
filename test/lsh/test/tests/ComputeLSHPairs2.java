@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lsh.test.methods.LSH;
+import lsh.methods.LSHTmp;
 import lsh.utils.Utils;
 
 public class ComputeLSHPairs2 {
