@@ -19,14 +19,20 @@ public class MakeDocSignatures {
 		
 		System.out.println("Computing document signatures from " + rootFile.getAbsolutePath());
 		
+		System.out.println(sm.getDocCounts().size());
+		
 		long start = System.currentTimeMillis();
 		sm.process(rootFile);
 		long end = System.currentTimeMillis();
+		
+		System.out.println(sm.getDocCounts().size());
 		
 		System.out.println("Took " + (end-start)/1000.0 + " seconds...");
 		
 		int[][] signatures = sm.getSignatures();
 		List<String> filenames = sm.getFilenames();
+		
+		System.out.println("There are " + signatures.length + " signatures");
 		
 		System.out.println("Saving dataset information...");
 		

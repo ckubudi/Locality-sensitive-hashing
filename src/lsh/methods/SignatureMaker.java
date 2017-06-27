@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -81,7 +83,7 @@ public class SignatureMaker {
 		int nBands = Integer.parseInt(lconf.getValue(ConfigParams.NUM_BANDS));
 		int nRows = Integer.parseInt(lconf.getValue(ConfigParams.NUM_ROWS));
 		int nHash = nBands*nRows;
-		int nMusics = docCount.size();
+		int nMusics = musicNames.size();
 		
 		
 		minHashShingles = new int[nMusics][nHash];
@@ -102,14 +104,16 @@ public class SignatureMaker {
 			BufferedReader reader = new BufferedReader(new FileReader(fMusic));
 			
 			Set<Integer> shingleBag = new HashSet<Integer>();
-			char[] cbuf = new char[shingleSize];
-			int docSize = 0;
+			Deque<Character> dc = new ArrayDeque<Character>();
 			
 			while(reader.ready()) {
-				reader.read(cbuf);
-				int shingleCode = Arrays.hashCode(cbuf);
-				shingleBag.add(shingleCode);
-				docSize += shingleSize;
+				char c = (char)reader.read();
+				dc.push(c);
+				if(dc.size() == shingleSize) {
+					int shingleCode = Arrays.hashCode(dc.toArray());
+					shingleBag.add(shingleCode);
+					dc.pollLast();
+				}
 			}
 			reader.close();
 			
@@ -119,7 +123,6 @@ public class SignatureMaker {
 			
 			int[] signature = sm.make(shingleBag);
 			minHashShingles[music_id] = signature;
-			musicSizes.add(docSize);
 		}
 	}
 }
