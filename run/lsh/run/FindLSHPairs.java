@@ -77,6 +77,5 @@ public class FindLSHPairs {
 			}
 		}
 		System.out.println("LSH found " + dupFiles + " replicated files with same name");
-		
 	}
 }

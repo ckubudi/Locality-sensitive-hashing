@@ -105,14 +105,17 @@ public class SignatureMaker {
 			
 			Set<Integer> shingleBag = new HashSet<Integer>();
 			Deque<Character> dc = new ArrayDeque<Character>();
-			
+			final int BUFFER_SIZE = 1024;
+			char[] cBuf = new char[BUFFER_SIZE];
 			while(reader.ready()) {
-				char c = (char)reader.read();
-				dc.push(c);
-				if(dc.size() == shingleSize) {
-					int shingleCode = Arrays.hashCode(dc.toArray());
-					shingleBag.add(shingleCode);
-					dc.pollLast();
+				int nchars = reader.read(cBuf);
+				for(int i = 0; i < nchars; i++) {
+					dc.push(cBuf[i]);
+					if(dc.size() == shingleSize) {
+						int shingleCode = Arrays.hashCode(dc.toArray());
+						shingleBag.add(shingleCode);
+						dc.pollLast();
+					}
 				}
 			}
 			reader.close();
