@@ -1,4 +1,4 @@
 tam_shingle=9
 threshold = 0.8
-b = 1
-r = 100
+b = 20
+r = 5

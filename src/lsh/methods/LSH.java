@@ -47,6 +47,43 @@ public class LSH {
 		}
 		candidatePairs.removeAll(removed);
 	}
+	public Set<int[]> getCheckedPairsCandidates(int[][] signatureDocs, double threshold) {
+		HashSet<int[]> pairs = new HashSet<int[]>();
+		
+		for(int b = 0; b < n_buckets; b++) {
+			Set<Integer> pairBuckets = new HashSet<Integer>();
+			Map<Integer, List<Integer>> bucket = new HashMap<Integer, List<Integer>>();
+			
+			for(int j = 0; j < signatureDocs.length; j++) {
+				//banda b da assinatura
+				int[] signatureBand = Arrays.copyOfRange(
+						signatureDocs[j],b*n_rows,(b+1)*n_rows);
+				//computa bucket da banda
+				int signatureCode = Arrays.hashCode(signatureBand);
+				//se não há ninguém no bucket, cria bucket
+				if(!bucket.containsKey(signatureCode)) {
+					bucket.put(signatureCode, new ArrayList<Integer>());
+				}else {
+					pairBuckets.add(signatureCode);
+				}
+				bucket.get(signatureCode).add(j);	
+			}
+			for(Integer bucket_id : pairBuckets) {
+				List<Integer> pair_candidates = bucket.get(bucket_id);
+				for(int i = 0; i < pair_candidates.size(); i++) {
+					for(int j = i+1; j < pair_candidates.size(); j++) {
+						int ci = pair_candidates.get(i);
+						int cj = pair_candidates.get(j);
+						if(Utils.similarity(signatureDocs[ci], signatureDocs[cj]) > threshold) {
+							int[] pair = {ci,cj};
+							pairs.add(pair);
+						}
+					}
+				}
+			}
+		}
+		return pairs;
+	}
 	public Set<int[]> getPairsCandidates(int[][] signatureDocs) {
 		HashSet<int[]> pairs = new HashSet<int[]>();
 		
