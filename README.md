@@ -1,1 +1,1 @@
-Locality-sensitive-hashing used to find similar lyrircs from different data sources
+Locality-sensitive-hashing used to find similar lyrics from different data sources
